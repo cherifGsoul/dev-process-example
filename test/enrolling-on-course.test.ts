@@ -1,83 +1,100 @@
 import { describe, test, expect } from "bun:test";
 
+type Course = {
+  title: string;
+  size: {
+    min: number;
+    max: number;
+  };
+  learners: string[];
+}
+
+const courses: Course[] = []
+
+const proposeCourse = (title: string, min: number, max: number) => {
+  const course = { title: title, size: { min, max }, learners: [] }
+  courses.push(course)
+}
+
+const enrol = (learner: string, title: string) => {
+  const course = courses.find(course => course.title === title)
+  if (course) {
+    course.learners.push(learner)
+  }
+}
+
+const isCourseViable = (title: string) => {
+  const course = courses.find(course => course.title === title)
+  if (course) {
+    return course.learners.length >= course.size.min
+  }
+  return false;
+}
+
+const courseCanAcceptEnrollment = (title: string) => {
+  const course = courses.find(course => course.title === title)
+  if (course) {
+    return course.learners.length < course.size.max;
+  }
+  return false;
+}
+
 describe("Enrolling on course", () => {
   test("Course does not get enough enrollments to be viable", () => {
     //Given "BDD for Beginners" was proposed with a class size of 2 to 3 people
-    const course: {
-      title: string;
-      size: {
-        min: number;
-        max: number;
-      };
-      learners: string[];
-    } = { title: "BDD for Beginners", size: { min: 2, max: 3 }, learners: [] }
-    // const courses = [course];
+    const title = "BDD for Beginners"
+    proposeCourse(title, 2, 3)
 
     //When only Alice enrols on this course
     const learner = "Alice"
 
-    course.learners.push(learner)
+    enrol(learner, title)
 
     //Then this course will not be viable
-    const isViable = course.learners.length >= course.size.min
-    expect(isViable).toBeFalse();
+    expect(isCourseViable(title)).toBeFalse();
 
   })
 
   test("Course gets enough enrollments to be viable", () => {
     //Given "BDD for Beginners" was proposed with a class size of 2 to 3 people
-    const course: {
-      title: string;
-      size: {
-        min: number;
-        max: number;
-      };
-      learners: string[];
-    } = { title: "BDD for Beginners", size: { min: 2, max: 3 }, learners: [] }
+    const title = "BDD for Beginners"
+    proposeCourse(title, 2, 3)
 
     // Given Alice has already enrolled on this course
     const learnerAlice = "Alice"
-
-    course.learners.push(learnerAlice)
+    enrol(learnerAlice, title)
 
     // When Bob enrols on this course
     const learnerBob = "Bob"
-    course.learners.push(learnerBob)
+    enrol(learnerBob, title)
 
     //Then this course will be viable
-    const isViable = course.learners.length >= course.size.min
+    const isViable = isCourseViable(title)
     expect(isViable).toBeTrue();
   })
 
   test("Enrollments are stopped when class size is reached", () => {
     //Given "BDD for Beginners" was proposed with a class size of 2 to 3 people
-    const course: {
-      title: string;
-      size: {
-        min: number;
-        max: number;
-      };
-      learners: string[];
-    } = { title: "BDD for Beginners", size: { min: 2, max: 3 }, learners: [] }
+    const title = "BDD for Beginners"
+    proposeCourse(title, 2, 3)
 
     // Given Alice, Bob and Charlie have already enrolled on this course
     const learnerAlice = "Alice"
-    course.learners.push(learnerAlice)
+    enrol(learnerAlice, title)
 
     const learnerBob = "Bob"
-    course.learners.push(learnerBob)
+    enrol(learnerBob, title)
 
     const learnerCharlie = "Charlie"
-    course.learners.push(learnerCharlie)
+    enrol(learnerCharlie, title)
 
     // When Derek tries to enrol on this course
     const learnerDerek = "Derek"
-    const canAcceptEnrollment = course.learners.length < course.size.max;
     expect(() => {
-      if (!canAcceptEnrollment) {
+      if (!courseCanAcceptEnrollment(title)) {
         throw new Error("Class is already at capacity")
       }
-      course.learners.push(learnerDerek)
+      enrol(learnerDerek, title)
     }).toThrow()
   })
 })
