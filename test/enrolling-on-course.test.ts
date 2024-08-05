@@ -79,7 +79,5 @@ describe("Enrolling on course", () => {
       }
       course.learners.push(learnerDerek)
     }).toThrow()
-
-
   })
 })
