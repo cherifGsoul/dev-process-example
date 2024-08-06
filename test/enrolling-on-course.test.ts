@@ -1,23 +1,8 @@
 import { describe, test, expect } from "bun:test";
-
-// Model
-type Course = {
-  title: string;
-  size: ClassSize;
-  learners: string[];
-}
-
-type ClassSize = {
-  min: number;
-  max: number;
-};
+import { Course, CourseForTitle, enrol, isCourseViable, proposeCourse, SaveCourse } from "../src/courses"
 
 // persistence dependency
 const courses: Map<string, Course> = new Map()
-
-type CourseForTitle = (title: string) => Promise<Course>
-
-type SaveCourse = (course: Course) => Promise<void>
 
 const courseForTitle: CourseForTitle = async (title: string) =>{
   const course = courses.get(title)
@@ -29,56 +14,6 @@ const courseForTitle: CourseForTitle = async (title: string) =>{
 
 const saveCourse: SaveCourse = async (course: Course) => { courses.set(course.title, course) }
 
-// Use cases
-const proposeCourse = async (saveCourse: SaveCourse, title: string, min: number, max: number) => {
-  const course = Course.propose(title, min, max)
-  await saveCourse(course)
-}
-
-const enrol = async (courseForTitle: CourseForTitle, saveCourse: SaveCourse, learner: string, title: string) => {
-  const course = await courseForTitle(title)
-  Course.enrol(course, learner);
-  await saveCourse(course)
-}
-
-const isCourseViable = async (courseForTitle: CourseForTitle, title: string) => {
-  const course = await courseForTitle(title)
-  return Course.isViable(course);
-}
-
-// Calculations
-export namespace Course {
-
-  export const propose = (title: string, min: number, max: number): Course => {
-    return {
-      title,
-      size: ClassSize.between(min, max),
-      learners: []
-    }
-  }
-
-  export const enrol = (course: Course, learner: string) => {
-    if (!canAcceptEnrollment(course)) {
-      throw new Error("Course class is already at capacity!")
-    }
-    course.learners.push(learner)
-  }
-
-  export const isViable = (course) =>  ClassSize.isViable(course.learners, course.size)
-
-  const canAcceptEnrollment = (course: Course) => ClassSize.hasCapacity(course.learners, course.size)
-}
-
-export namespace ClassSize {
-  export const between = (min: number, max: number) => ({
-    min,
-    max
-  })
-
-  export const isViable = (learners: string[], size: ClassSize) => learners.length >= size.min;
-
-  export const hasCapacity = (learners: string[], size: ClassSize) => learners.length < size.max
-}
 
 describe("Enrolling on course", () => {
   test("Course does not get enough enrollments to be viable", async () => {
