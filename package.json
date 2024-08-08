@@ -2,13 +2,39 @@
   "name": "enrol-on-course",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "lint": "eslint 'src/**/*.{js,ts, tsx}'",
+    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "front:dev": "vite",
+    "front:build": "vite build",
+    "front:serve": "vite preview"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/pg": "^8.11.6",
+    "@typescript-eslint/eslint-plugin": "^8.0.1",
+    "@typescript-eslint/parser": "^8.0.1",
+    "drizzle-kit": "^0.24.0",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typed-htmx": "^0.3.1",
+    "vite": "^5.4.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.5.4"
   },
   "dependencies": {
-    "hono": "^4.5.4"
+    "@libsql/client": "^0.8.1",
+    "bulma": "^1.0.2",
+    "drizzle-orm": "^0.33.0",
+    "hono": "^4.5.4",
+    "htmx.org": "^1.9.12",
+    "kysely": "^0.27.4",
+    "pg": "^8.12.0",
+    "sass": "^1.77.8",
+    "zod": "^3.23.8"
   }
 }
