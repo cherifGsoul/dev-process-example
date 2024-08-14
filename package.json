@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "lint": "eslint 'src/**/*.{js,ts, tsx}'",
-    "format": "prettier --write 'src/**/*.{js,ts}'",
+    "format": "prettier --write 'src/**/*.{js,ts,x tsx}'",
     "front:dev": "vite",
     "front:build": "vite build",
     "front:serve": "vite preview"
