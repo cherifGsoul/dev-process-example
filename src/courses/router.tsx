@@ -1,6 +1,6 @@
 import { Hono } from "hono"
 import { validator } from 'hono/validator';
-import { Layout } from "../layout";
+import { Layout } from "../Layout";
 import type { FC } from "hono/jsx";
 import { z } from "zod";
 
